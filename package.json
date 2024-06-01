@@ -13,6 +13,11 @@
 	"scripts": {
 		"build": "tsup src/index.ts --dts --format esm,cjs"
 	},
+	"files": [
+		"dist",
+		"package.json",
+		"README.md"
+	],
 	"devDependencies": {
 		"tsup": "^8.0.2",
 		"typescript": "^5.4.5"
