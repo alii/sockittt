@@ -1,4 +1,20 @@
 {
-  "name": "sockittt",
-  "packageManager": "yarn@4.1.1"
+	"name": "sockittt",
+	"packageManager": "yarn@4.2.2",
+	"version": "0.0.1",
+	"type": "module",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"scripts": {
+		"build": "tsup src/index.ts --dts --format esm,cjs"
+	},
+	"devDependencies": {
+		"tsup": "^8.0.2",
+		"typescript": "^5.4.5"
+	}
 }
