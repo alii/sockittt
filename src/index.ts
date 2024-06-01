@@ -72,8 +72,6 @@ export class Sockittt {
 	private readonly url: string | URL;
 	private readonly options: RequiredKeys<Partial<SockitttOptions>, "maxAttempts">;
 
-	private lastPongTimer: NativeTimeout | null = null;
-
 	/**
 	 * Creates a new instance of the Sockittt class
 	 * @param url The URL as a string or a URL object
