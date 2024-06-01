@@ -128,14 +128,6 @@ export class Sockittt {
 		this.ws = new WebSocket(this.url, this.options.protocols ?? []);
 
 		this.ws.onmessage = event => {
-			if (this.lastPongTimer) {
-				clearTimeout(this.lastPongTimer);
-			}
-
-			this.lastPongTimer = setTimeout(() => {
-				this.reconnect(event);
-			}, 10_000);
-
 			this.options.onMessage?.(event);
 		};
 
@@ -168,6 +160,10 @@ export class Sockittt {
 	 * @param e The event that caused the reconnection
 	 */
 	private reconnect(e: Event | CloseEvent) {
+		if (this.ws) {
+			this.ws.close(1000, "Reconnecting");
+		}
+
 		if (this.timer !== undefined && this.attempts++ < this.options.maxAttempts) {
 			this.timer = setTimeout(() => {
 				this.options.onReconnect?.(e);
