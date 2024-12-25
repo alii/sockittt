@@ -1,52 +1,73 @@
-export type RequiredKeys<T, K extends keyof T> = T extends T
-	? Required<Pick<T, K>> & Omit<T, K>
-	: never;
-
-export type NativeTimeout = ReturnType<typeof setTimeout>;
+type RequiredKeys<T, K extends keyof T> = T extends T ? Required<Pick<T, K>> & Omit<T, K> : never;
 
 export interface SockitttOptions {
 	/**
 	 * The WebSocket protocol(s) to use
 	 */
 	protocols: string | string[];
+
 	/**
 	 * The timeout in milliseconds before attempting to reconnect during a disconnection
 	 */
 	timeout: number;
+
 	/**
 	 * The maximum reconnects that are allowed to occur during reconnection
 	 * @default Infinity
 	 */
 	maxAttempts: number;
+
 	/**
 	 * Called when the WebSocket connection is opened
 	 */
 	onOpen: (ev: Event) => void;
+
 	/**
 	 * Called when a message is received from the WebSocket
 	 * @param ev The message event
 	 */
 	onMessage: (ev: MessageEvent) => void;
+
 	/**
 	 * Called when the WebSocket is attempting to reconnect
 	 * @param ev The event object, which could be a close event or a generic event.
 	 */
 	onReconnect: (ev: Event | CloseEvent) => void;
+
 	/**
 	 * Called when the maximum number of reconnects exceeds maxAttempts.
 	 * @param ev The event object, which could be a close event or a generic event.
 	 */
 	onDidExhaustMaxAttempts: (ev: Event | CloseEvent) => void;
+
 	/**
 	 * Called when the WebSocket connection is closed
 	 * @param ev The close event
 	 */
 	onClose: (ev: CloseEvent) => void;
+
 	/**
 	 * Called when an error occurs with the WebSocket connection
 	 * @param ev The error event
 	 */
 	onError: (ev: Event) => void;
+
+	/**
+	 * Allow for modifying the WebSocket instance before it is opened. This is most useful
+	 * for setting the .binaryType property, but can be used for other things as well.
+	 * @param websocket The WebSocket instance
+	 * @returns void
+	 *
+	 * @example
+	 * ```ts
+	 * const socket = new Sockittt('ws://localhost:8080', {
+	 * 	with: ws => {
+	 * 		ws.binaryType = 'arraybuffer';
+	 * 	},
+	 * });
+	 * ```
+	 */
+	with?: (websocket: WebSocket) => void;
 }
 
 /**
@@ -67,7 +88,7 @@ export interface SockitttOptions {
 export class Sockittt {
 	private ws: WebSocket | null = null;
 	private attempts = 0;
-	private timer: NativeTimeout | null | undefined = null;
+	private timer: ReturnType<typeof setTimeout> | null | undefined = null;
 
 	private readonly url: string | URL;
 	private readonly options: RequiredKeys<Partial<SockitttOptions>, "maxAttempts">;
@@ -124,6 +145,10 @@ export class Sockittt {
 	 */
 	public open() {
 		this.ws = new WebSocket(this.url, this.options.protocols ?? []);
+
+		if (this.options.with) {
+			this.options.with(this.ws);
+		}
 
 		this.ws.onmessage = event => {
 			this.options.onMessage?.(event);

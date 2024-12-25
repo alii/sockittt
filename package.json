@@ -1,8 +1,13 @@
 {
 	"name": "sockittt",
 	"packageManager": "yarn@4.2.2",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"type": "module",
+	"homepage": "+https://github.com/alii/sockittt",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alii/sockittt.git"
+	},
 	"exports": {
 		"./package.json": "./package.json",
 		".": {
